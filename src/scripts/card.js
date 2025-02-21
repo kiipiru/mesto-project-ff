@@ -15,16 +15,16 @@ export function createCard(
   cardTitle.textContent = cardNm;
   cardImage.src = cardImg;
   cardImage.alt = cardNm;
-  cardDeleteButton.addEventListener("click", removeCards);
-  likeButton.addEventListener("click", addLikeButton);
-  cardImage.addEventListener("click", zoomIn);
+  cardDeleteButton.addEventListener("click",() => removeCards(cardElement));
+  likeButton.addEventListener("click",() => addLikeButton(likeButton));
+  cardImage.addEventListener("click",() => zoomIn(cardImage.src, cardTitle.textContent));
   return cardElement;
 }
 
-export function removeCard(evt) {
-  evt.target.closest(".card").remove();
+export function removeCard(card) {
+  card.remove();
 }
 
-export function addLike(evt) {
-  evt.target.classList.toggle("card__like-button_is-active");
+export function addLike(cardLikeButton) {
+  cardLikeButton.classList.toggle("card__like-button_is-active");
 }

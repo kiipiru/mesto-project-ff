@@ -5,6 +5,8 @@ import "./pages/index.css";
 
 const cardsSection = document.querySelector(".places__list");
 const cardAddButton = document.querySelector(".profile__add-button");
+const popUps = document.querySelectorAll(".popup");
+const popUpImage = document.querySelector(".popup_type_image");
 const popUpEdit = document.querySelector(".popup_type_edit");
 const popUpAdd = document.querySelector(".popup_type_new-card");
 const profileEditButton = document.querySelector(".profile__edit-button");
@@ -15,8 +17,16 @@ const cardAddForm = document.forms["new-place"];
 const profileInfoForm = document.forms["edit-profile"];
 const cardNameInput = cardAddForm.elements["place-name"];
 const cardImageInput = cardAddForm.elements["link"];
-let profileNameInput = profileInfoForm.elements.name;
-let profileDescriptionInput = profileInfoForm.elements.description;
+const profileNameInput = profileInfoForm.elements.name;
+const profileDescriptionInput = profileInfoForm.elements.description;
+
+popUps.forEach((popUp) => {
+  popUp.classList.add("popup_is-animated");
+});
+
+popUps.forEach((popUp) => {
+  popUp.addEventListener("click", closePopUpByOverlay);
+});
 
 function toggleInitialCards(cardsContent) {
   const cardElement = createCard(
@@ -44,14 +54,15 @@ function addEventListener() {
   });
 }
 
-function handleFormSubmit(evt) {
+function handleEditProfileFormSubmit(evt) {
   evt.preventDefault();
   profileName.textContent = profileNameInput.value;
   profileDescription.textContent = profileDescriptionInput.value;
-  closePopUp(evt.target.closest(".popup"));
+  closePopUp(popUpEdit);
+  profileInfoForm.reset();
 }
 
-profileInfoForm.addEventListener("submit", handleFormSubmit);
+profileInfoForm.addEventListener("submit", handleEditProfileFormSubmit);
 
 function addCard(evt) {
   evt.preventDefault();
@@ -63,7 +74,7 @@ function addCard(evt) {
     zoomInImage
   );
   cardsSection.prepend(cardElement);
-  closePopUp(evt.target.closest(".popup"));
+  closePopUp(popUpAdd);
   cardAddForm.reset();
 }
 
@@ -75,13 +86,16 @@ popUpCloseButtons.forEach((button) => {
   button.addEventListener("click", function () {
     const popUpToClose = button.closest(".popup");
     closePopUp(popUpToClose);
+    if ((popUpToClose === popUpEdit)) {
+      profileInfoForm.reset();
+    }
   });
 });
 
-function zoomInImage(evt) {
-  const popUpImage = document.querySelector(".popup_type_image");
-  document.querySelector(".popup__image").src = evt.target.src;
-  document.querySelector(".popup__caption").textContent = evt.target.alt;
+function zoomInImage(cardImage, cardTitle) {
+  document.querySelector(".popup__image").src = cardImage;
+  document.querySelector(".popup__image").alt = cardTitle;
+  document.querySelector(".popup__caption").textContent = cardTitle;
   openPopUp(popUpImage);
 }
 
