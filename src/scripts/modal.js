@@ -4,11 +4,15 @@ export function openPopUp(popUp) {
 }
 
 export function closePopUp(popUpTarget) {
+  const popUpEdit = document.querySelector(".popup_type_edit");
   popUpTarget.classList.remove("popup_is-opened");
   document.removeEventListener("keydown", handleEsc);
+  if ((popUpTarget = popUpEdit)) {
+    popUpTarget.querySelector("form").reset();
+  }
 }
 
-export function handleEsc(evt) {
+function handleEsc(evt) {
   if (evt.key === "Escape") {
     const openedPopUp = document.querySelector(".popup_is-opened");
     closePopUp(openedPopUp);
@@ -16,20 +20,12 @@ export function handleEsc(evt) {
 }
 
 export function closePopUpByOverlay() {
-const popUps = document.querySelectorAll(".popup");
-  popUps.forEach(function (popup) {
-    popup.addEventListener("click", function (evt) {
+  const popUps = document.querySelectorAll(".popup");
+  popUps.forEach(function (popUp) {
+    popUp.addEventListener("click", function (evt) {
       if (evt.target.classList.contains("popup_is-opened")) {
-        closePopUp(popup);
+        closePopUp(popUp);
       }
     });
   });
-}
-
-export function zoomInImage(evt) {
-  const popUpImage = document.querySelector(".popup_type_image");
-  document.querySelector(".popup__image").src = evt.target.src;
-  document.querySelector(".popup__caption").textContent =
-    evt.target.textContent;
-  openPopUp(popUpImage);
 }

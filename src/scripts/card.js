@@ -1,15 +1,20 @@
-export function toggleCard(cardsContent, removeCards, addLikeButton, zoomIn) {
+export function createCard(
+  cardNm,
+  cardImg,
+  removeCards,
+  addLikeButton,
+  zoomIn
+) {
   const cardTemplate = document.querySelector("#card-template").content;
   const card = cardTemplate.querySelector(".card");
-  const cardsSection = document.querySelector(".places__list");
   const cardElement = card.cloneNode(true);
-  const cardImage = cardElement.querySelector(".card__image");
   const cardDeleteButton = cardElement.querySelector(".card__delete-button");
   const likeButton = cardElement.querySelector(".card__like-button");
-  cardImage.src = cardsContent.link;
-  cardImage.alt = cardsContent.name;
-  cardElement.querySelector(".card__title").textContent = cardsContent.name;
-  cardsSection.append(cardElement);
+  const cardImage = cardElement.querySelector(".card__image");
+  const cardTitle = cardElement.querySelector(".card__title");
+  cardTitle.textContent = cardNm;
+  cardImage.src = cardImg;
+  cardImage.alt = cardNm;
   cardDeleteButton.addEventListener("click", removeCards);
   likeButton.addEventListener("click", addLikeButton);
   cardImage.addEventListener("click", zoomIn);
