@@ -15,9 +15,11 @@ export function createCard(
   cardTitle.textContent = cardNm;
   cardImage.src = cardImg;
   cardImage.alt = cardNm;
-  cardDeleteButton.addEventListener("click",() => removeCards(cardElement));
-  likeButton.addEventListener("click",() => addLikeButton(likeButton));
-  cardImage.addEventListener("click",() => zoomIn(cardImage.src, cardTitle.textContent));
+  cardDeleteButton.addEventListener("click", () => removeCards(cardElement));
+  likeButton.addEventListener("click", () => addLikeButton(likeButton));
+  cardImage.addEventListener("click", () =>
+    zoomIn(cardImage.src, cardTitle.textContent)
+  );
   return cardElement;
 }
 

@@ -25,7 +25,12 @@ popUps.forEach((popUp) => {
 });
 
 popUps.forEach((popUp) => {
-  popUp.addEventListener("click", closePopUpByOverlay);
+  popUp.addEventListener("click", (evt) => {
+    closePopUpByOverlay(evt);
+    if (popUp === popUpEdit) {
+      profileInfoForm.reset();
+    }
+  });
 });
 
 function toggleInitialCards(cardsContent) {
@@ -86,7 +91,7 @@ popUpCloseButtons.forEach((button) => {
   button.addEventListener("click", function () {
     const popUpToClose = button.closest(".popup");
     closePopUp(popUpToClose);
-    if ((popUpToClose === popUpEdit)) {
+    if (popUpToClose === popUpEdit) {
       profileInfoForm.reset();
     }
   });
@@ -100,4 +105,3 @@ function zoomInImage(cardImage, cardTitle) {
 }
 
 addEventListener();
-closePopUpByOverlay();
