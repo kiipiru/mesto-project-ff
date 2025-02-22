@@ -9,6 +9,8 @@ const popUps = document.querySelectorAll(".popup");
 const popUpImage = document.querySelector(".popup_type_image");
 const popUpEdit = document.querySelector(".popup_type_edit");
 const popUpAdd = document.querySelector(".popup_type_new-card");
+const imageInsidePopUp = document.querySelector(".popup__image");
+const popUpImageCaption = document.querySelector(".popup__caption");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const popUpCloseButtons = document.querySelectorAll(".popup__close");
 const profileName = document.querySelector(".profile__title");
@@ -27,13 +29,10 @@ popUps.forEach((popUp) => {
 popUps.forEach((popUp) => {
   popUp.addEventListener("click", (evt) => {
     closePopUpByOverlay(evt);
-    if (popUp === popUpEdit) {
-      profileInfoForm.reset();
-    }
   });
 });
 
-function toggleInitialCards(cardsContent) {
+function addInitialCards(cardsContent) {
   const cardElement = createCard(
     cardsContent.name,
     cardsContent.link,
@@ -45,7 +44,7 @@ function toggleInitialCards(cardsContent) {
 }
 
 initialCards.forEach((initialCards) => {
-  toggleInitialCards(initialCards, removeCard, addLike, zoomInImage);
+  addInitialCards(initialCards, removeCard, addLike, zoomInImage);
 });
 
 function addEventListener() {
@@ -64,7 +63,6 @@ function handleEditProfileFormSubmit(evt) {
   profileName.textContent = profileNameInput.value;
   profileDescription.textContent = profileDescriptionInput.value;
   closePopUp(popUpEdit);
-  profileInfoForm.reset();
 }
 
 profileInfoForm.addEventListener("submit", handleEditProfileFormSubmit);
@@ -91,16 +89,13 @@ popUpCloseButtons.forEach((button) => {
   button.addEventListener("click", function () {
     const popUpToClose = button.closest(".popup");
     closePopUp(popUpToClose);
-    if (popUpToClose === popUpEdit) {
-      profileInfoForm.reset();
-    }
   });
 });
 
 function zoomInImage(cardImage, cardTitle) {
-  document.querySelector(".popup__image").src = cardImage;
-  document.querySelector(".popup__image").alt = cardTitle;
-  document.querySelector(".popup__caption").textContent = cardTitle;
+  imageInsidePopUp.src = cardImage;
+  imageInsidePopUp.alt = cardTitle;
+  popUpImageCaption.textContent = cardTitle;
   openPopUp(popUpImage);
 }
 
