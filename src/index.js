@@ -39,7 +39,13 @@ const validationConfig = {
   inputElement: ".popup__input",
   inputElementErrorClass: "popup__input_type_error",
   errorElementActiveClass: "popup__input-error-active",
+  formSelector: ".popup__form",
+  errorClass: "popup__input-error-active",
 };
+export const configForAPI = {
+  URL: "https://mesto.nomoreparties.co/v1/wff-cohort-33",
+  token: "29815212-d12a-4e86-b346-3f523f6c96a0"
+}
 
 popUps.forEach((popUp) => {
   popUp.classList.add("popup_is-animated");
@@ -63,22 +69,13 @@ function addEventListener() {
   });
   profileAvatar.addEventListener("click", () => {
     openPopUp(popUpEditAvatar);
-    console.log(profileAvatar.style.backgroundImage);
   });
 }
 
 function handleEditProfileFormSubmit(evt) {
   evt.preventDefault();
   showLoadingStatus(profileInfoForm.querySelector(".popup__button"), true);
-  sendProfileInfo(profileNameInput.value, profileDescriptionInput.value)
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      {
-        return Promise.reject(res.status);
-      }
-    })
+  sendProfileInfo(configForAPI, profileNameInput.value, profileDescriptionInput.value)
     .then((profileData) => {
       profileName.textContent = profileData.name;
       profileDescription.textContent = profileData.about;
@@ -95,25 +92,11 @@ profileInfoForm.addEventListener("submit", handleEditProfileFormSubmit);
 function addCard(evt) {
   evt.preventDefault();
   showLoadingStatus(cardAddForm.querySelector(".popup__button"), true);
-  sendNewCardToServer(cardNameInput.value, cardImageInput.value)
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      {
-        return Promise.reject(res.status);
-      }
-    })
+  sendNewCardToServer(configForAPI, cardNameInput.value, cardImageInput.value)
     .then((data) => {
       cardsSection.prepend(
         createCard(
-          data.name,
-          data.link,
-          data._id,
-          data.likes.length,
-          data.likes.some((array) => {
-            return array._id.includes(profileData._id);
-          }),
+          [data.owner._id, data],
           removeCard,
           toggleLike,
           zoomInImage
@@ -153,25 +136,12 @@ function zoomInImage(cardImage, cardTitle) {
 
 addEventListener();
 
-enableValidation({
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__input-error-active",
-});
+enableValidation(
+  validationConfig
+);
 
 function renderInitialProfileInfo() {
-  getProfileInfo()
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      {
-        return Promise.reject(res.status);
-      }
-    })
+  getProfileInfo(configForAPI)
     .then((profileData) => {
       profileName.textContent = profileData.name;
       profileDescription.textContent = profileData.about;
@@ -187,13 +157,7 @@ renderInitialProfileInfo();
 function handleAvatarEditFormSubmit(evt) {
   evt.preventDefault();
   showLoadingStatus(avatarEditForm.querySelector(".popup__button"), true);
-  changeAvatar(avatarEditInput.value)
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(res.status);
-    })
+  changeAvatar(configForAPI, avatarEditInput.value)
     .then((newAvatarData) => {
       profileAvatar.style.backgroundImage = `url(${newAvatarData.avatar})`;
     })
@@ -210,34 +174,15 @@ function handleAvatarEditFormSubmit(evt) {
 avatarEditForm.addEventListener("submit", handleAvatarEditFormSubmit);
 
 function showLoadingStatus(formButton, isLoading) {
-  if (isLoading) {
-    formButton.textContent = "Сохранение...";
-  } else {
-    formButton.textContent = "Сохранить";
-  }
+  isLoading ? formButton.textContent = "Сохранение..." : formButton.textContent = "Сохранить";
 }
 
 function addInitialCards() {
-  getDataForCards()
-    .then(([res1, res2]) => {
-      if (res1.ok && res2.ok) {
-        return Promise.all([res1.json(), res2.json()]);
-      }
-      {
-        return Promise.reject(`${res1.status}, ${res2.status}`);
-      }
-    })
+  getDataForCards(configForAPI)
     .then(([profileData, cardsData]) => {
       cardsData.forEach((card) => {
         const cardElement = createCard(
-          card.name,
-          card.link,
-          card._id,
-          card.likes.length,
-          card.likes.some((array) => {
-            return array._id.includes(profileData._id);
-          }),
-          card.owner._id === profileData._id,
+          [profileData._id, card],
           removeCard,
           toggleLike,
           zoomInImage

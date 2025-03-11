@@ -1,103 +1,115 @@
 // функции для card.js
 
-export function sendLikeToServer(cardId) {
+function handleResults(res) {
+  if (res.ok) {return res.json()} {return Promise.reject(res.status)}
+}
+
+export function sendLikeToServer(config, cardId) {
   return fetch(
-    `https://mesto.nomoreparties.co/v1/wff-cohort-33/cards/likes/${cardId}`,
+    `${config.URL}/cards/likes/${cardId}`,
     {
       method: "PUT",
       headers: {
-        authorization: "29815212-d12a-4e86-b346-3f523f6c96a0",
+        authorization: `${config.token}`,
       },
     }
-  );
+  )
+  .then(handleResults);
 }
 
-export function deleteLikeFromServer(cardId) {
+export function deleteLikeFromServer(config, cardId) {
   return fetch(
-    `https://mesto.nomoreparties.co/v1/wff-cohort-33/cards/likes/${cardId}`,
+    `${config.URL}/cards/likes/${cardId}`,
     {
       method: "DELETE",
       headers: {
-        authorization: "29815212-d12a-4e86-b346-3f523f6c96a0",
+        authorization: `${config.token}`,
       },
     }
-  );
+  )
+  .then(handleResults);
 }
 
-export function removeCardFromServer(cardId) {
+export function removeCardFromServer(config, cardId) {
   return fetch(
-    `https://mesto.nomoreparties.co/v1/wff-cohort-33/cards/${cardId}`,
+    `${config.URL}/cards/${cardId}`,
     {
       method: "DELETE",
       headers: {
-        authorization: "29815212-d12a-4e86-b346-3f523f6c96a0",
+        authorization: `${config.token}`,
       },
     }
-  );
+  )
+  .then(handleResults);
 }
 
 //　функции для index.js
 
-export function changeAvatar(newAvatar) {
+export function changeAvatar(config, newAvatar) {
   return fetch(
-    "https://mesto.nomoreparties.co/v1/wff-cohort-33/users/me/avatar",
+    `${config.URL}/users/me/avatar`,
     {
       method: "PATCH",
       headers: {
-        authorization: "29815212-d12a-4e86-b346-3f523f6c96a0",
+        authorization: `${config.token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         avatar: newAvatar,
       }),
     }
-  );
+  )
+  .then(handleResults);
 }
 
-export function sendNewCardToServer(cardName, cardLink) {
-  return fetch("https://mesto.nomoreparties.co/v1/wff-cohort-33/cards", {
+export function sendNewCardToServer(config, cardName, cardLink) {
+  return fetch(`${config.URL}/cards`, {
     method: "POST",
     headers: {
-      authorization: "29815212-d12a-4e86-b346-3f523f6c96a0",
+      authorization: `${config.token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       name: cardName,
       link: cardLink,
     }),
-  });
+  })
+  .then(handleResults);
 }
 
-export function sendProfileInfo(profileName, profileDescription) {
-  return fetch("https://mesto.nomoreparties.co/v1/wff-cohort-33/users/me", {
+export function sendProfileInfo(config, profileName, profileDescription) {
+  return fetch(`${config.URL}/users/me`, {
     method: "PATCH",
     headers: {
-      authorization: "29815212-d12a-4e86-b346-3f523f6c96a0",
+      authorization: `${config.token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       name: profileName,
       about: profileDescription,
     }),
-  });
+  })
+  .then(handleResults);
 }
 
-export function getProfileInfo() {
-  return fetch("https://mesto.nomoreparties.co/v1/wff-cohort-33/users/me", {
+export function getProfileInfo(config) {
+  return fetch(`${config.URL}/users/me`, {
     headers: {
-      authorization: "29815212-d12a-4e86-b346-3f523f6c96a0",
+      authorization: `${config.token}`,
     },
-  });
+  })
+  .then(handleResults);
 }
 
-function getGroupCards() {
-  return fetch("https://mesto.nomoreparties.co/v1/wff-cohort-33/cards", {
+function getGroupCards(config) {
+  return fetch(`${config.URL}/cards`, {
     headers: {
-      authorization: "29815212-d12a-4e86-b346-3f523f6c96a0",
+      authorization: `${config.token}`,
     },
-  });
+  })
+  .then(handleResults);
 }
 
-export const getDataForCards = function () {
-  return Promise.all([getProfileInfo(), getGroupCards()]);
+export const getDataForCards = function (config) {
+  return Promise.all([getProfileInfo(config), getGroupCards(config)])
 };

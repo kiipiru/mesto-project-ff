@@ -4,17 +4,9 @@ import {
   removeCardFromServer,
 } from "./api.js";
 
-export function createCard(
-  cardNm,
-  cardImg,
-  cardId,
-  likeAmount,
-  isLiked,
-  createdByMe,
-  removeCards,
-  toggleLikeButton,
-  zoomIn
-) {
+import { configForAPI } from "../index.js";
+
+export function createCard(data, removeCards, toggleLike, zoomIn) {
   const cardTemplate = document.querySelector("#card-template").content;
   const card = cardTemplate.querySelector(".card");
   const cardElement = card.cloneNode(true);
@@ -23,24 +15,33 @@ export function createCard(
   const cardImage = cardElement.querySelector(".card__image");
   const cardTitle = cardElement.querySelector(".card__title");
   const cardLikeCounter = cardElement.querySelector(".card__like-counter");
-  cardLikeCounter.textContent = likeAmount;
-  cardTitle.textContent = cardNm;
-  cardImage.src = cardImg;
-  cardImage.alt = cardNm;
-  if (createdByMe) {
+
+  // информация с сервера
+  const userProfileId = data[0];
+  const cardData = data[1];
+  const cardId = cardData._id;
+  let isLikedByMe = cardData.likes.some((like) => {
+    return like._id.includes(userProfileId);
+  });
+
+  cardLikeCounter.textContent = cardData.likes.length;
+  cardTitle.textContent = cardData.name;
+  cardImage.src = cardData.link;
+  cardImage.alt = cardData.name;
+  if (cardData.owner._id === userProfileId) {
     cardDeleteButton.addEventListener("click", () =>
-      removeCard(cardElement, cardId)
+      removeCards(cardElement, cardId)
     );
   } else {
     cardDeleteButton.remove();
   }
-  if (isLiked) {
+  if (isLikedByMe) {
     likeButton.classList.add("card__like-button_is-active");
   }
   likeButton.addEventListener("click", () => {
-    toggleLike(likeButton, cardId, cardLikeCounter, isLiked).then(
+    toggleLike(likeButton, cardId, cardLikeCounter, isLikedByMe).then(
       (newIsLiked) => {
-        isLiked = newIsLiked;
+        isLikedByMe = newIsLiked;
       }
     );
   });
@@ -51,14 +52,9 @@ export function createCard(
 }
 
 export function removeCard(card, cardId) {
-  removeCardFromServer(cardId)
-    .then((res) => {
-      if (res.ok) {
-        card.remove();
-      }
-      {
-        return Promise.reject(res.status);
-      }
+  removeCardFromServer(configForAPI, cardId)
+    .then(() => {
+      card.remove();
     })
     .catch((err) => {
       console.log(err);
@@ -66,41 +62,12 @@ export function removeCard(card, cardId) {
 }
 
 export function toggleLike(cardLikeButton, cardId, cardLikeCounter, isLiked) {
-  if (!isLiked) {
-    return sendLikeToServer(cardId)
-      .then((data) => {
-        if (data.ok) {
-          return data.json();
-        }
-        {
-          return Promise.reject(data.status);
-        }
-      })
-      .then((data) => {
-        cardLikeButton.classList.add("card__like-button_is-active");
-        cardLikeCounter.textContent = data.likes.length;
-        return !isLiked;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  } else {
-    return deleteLikeFromServer(cardId)
-      .then((data) => {
-        if (data.ok) {
-          return data.json();
-        }
-        {
-          return Promise.reject(data.status);
-        }
-      })
-      .then((data) => {
-        cardLikeButton.classList.remove("card__like-button_is-active");
-        cardLikeCounter.textContent = data.likes.length;
-        return !isLiked;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  const likeMethod = isLiked ? deleteLikeFromServer : sendLikeToServer;
+  return likeMethod(configForAPI, cardId)
+    .then((data) => {
+      cardLikeButton.classList.toggle("card__like-button_is-active");
+      cardLikeCounter.textContent = data.likes.length;
+      return !isLiked;
+    })
+    .catch((err) => console.log(err));
 }
