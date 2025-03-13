@@ -64,9 +64,7 @@ function setValidationListener(formElement, classSelectors) {
   const inputList = Array.from(
     formElement.querySelectorAll(classSelectors.inputElement)
   );
-  const buttonElement = formElement.querySelector(
-    classSelectors.buttonElement
-  );
+  const buttonElement = formElement.querySelector(classSelectors.buttonElement);
   toggleButtonState(
     inputList,
     buttonElement,
@@ -106,11 +104,11 @@ export function clearValidation(form, validationConfig) {
   submitButton.disabled = true;
   const inputList = form.querySelectorAll(validationConfig.inputElement);
   inputList.forEach((inputElement) => {
-    hideInputError(form, inputElement, validationConfig.inputElementErrorClass, validationConfig.errorElementActiveClass);
+    hideInputError(
+      form,
+      inputElement,
+      validationConfig.inputElementErrorClass,
+      validationConfig.errorElementActiveClass
+    );
   });
-  const errorElement = form.querySelector(
-    `${validationConfig.inputElement}-error`
-  );
-  errorElement.classList.remove(validationConfig.errorElementActiveClass);
-  errorElement.textContent = "";
 }

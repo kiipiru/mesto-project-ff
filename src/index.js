@@ -44,8 +44,8 @@ const validationConfig = {
 };
 export const configForAPI = {
   URL: "https://mesto.nomoreparties.co/v1/wff-cohort-33",
-  token: "29815212-d12a-4e86-b346-3f523f6c96a0"
-}
+  token: "29815212-d12a-4e86-b346-3f523f6c96a0",
+};
 
 popUps.forEach((popUp) => {
   popUp.classList.add("popup_is-animated");
@@ -75,7 +75,11 @@ function addEventListener() {
 function handleEditProfileFormSubmit(evt) {
   evt.preventDefault();
   showLoadingStatus(profileInfoForm.querySelector(".popup__button"), true);
-  sendProfileInfo(configForAPI, profileNameInput.value, profileDescriptionInput.value)
+  sendProfileInfo(
+    configForAPI,
+    profileNameInput.value,
+    profileDescriptionInput.value
+  )
     .then((profileData) => {
       profileName.textContent = profileData.name;
       profileDescription.textContent = profileData.about;
@@ -95,12 +99,7 @@ function addCard(evt) {
   sendNewCardToServer(configForAPI, cardNameInput.value, cardImageInput.value)
     .then((data) => {
       cardsSection.prepend(
-        createCard(
-          [data.owner._id, data],
-          removeCard,
-          toggleLike,
-          zoomInImage
-        )
+        createCard(data, data.owner._id, removeCard, toggleLike, zoomInImage)
       );
     })
     .then(() => {
@@ -136,9 +135,7 @@ function zoomInImage(cardImage, cardTitle) {
 
 addEventListener();
 
-enableValidation(
-  validationConfig
-);
+enableValidation(validationConfig);
 
 function renderInitialProfileInfo() {
   getProfileInfo(configForAPI)
@@ -167,14 +164,16 @@ function handleAvatarEditFormSubmit(evt) {
     .finally(() => {
       showLoadingStatus(avatarEditForm.querySelector(".popup__button"), false);
     });
-    closePopUp(popUpEditAvatar);
-    avatarEditForm.reset();
+  closePopUp(popUpEditAvatar);
+  avatarEditForm.reset();
 }
 
 avatarEditForm.addEventListener("submit", handleAvatarEditFormSubmit);
 
 function showLoadingStatus(formButton, isLoading) {
-  isLoading ? formButton.textContent = "Сохранение..." : formButton.textContent = "Сохранить";
+  isLoading
+    ? (formButton.textContent = "Сохранение...")
+    : (formButton.textContent = "Сохранить");
 }
 
 function addInitialCards() {
@@ -182,7 +181,8 @@ function addInitialCards() {
     .then(([profileData, cardsData]) => {
       cardsData.forEach((card) => {
         const cardElement = createCard(
-          [profileData._id, card],
+          card,
+          profileData._id,
           removeCard,
           toggleLike,
           zoomInImage

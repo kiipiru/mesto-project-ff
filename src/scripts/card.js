@@ -6,7 +6,7 @@ import {
 
 import { configForAPI } from "../index.js";
 
-export function createCard(data, removeCards, toggleLike, zoomIn) {
+export function createCard(cardsData, userId, removeCards, toggleLike, zoomIn) {
   const cardTemplate = document.querySelector("#card-template").content;
   const card = cardTemplate.querySelector(".card");
   const cardElement = card.cloneNode(true);
@@ -17,8 +17,8 @@ export function createCard(data, removeCards, toggleLike, zoomIn) {
   const cardLikeCounter = cardElement.querySelector(".card__like-counter");
 
   // информация с сервера
-  const userProfileId = data[0];
-  const cardData = data[1];
+  const userProfileId = userId;
+  const cardData = cardsData;
   const cardId = cardData._id;
   let isLikedByMe = cardData.likes.some((like) => {
     return like._id.includes(userProfileId);

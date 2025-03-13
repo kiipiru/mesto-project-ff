@@ -1,65 +1,54 @@
 // функции для card.js
 
 function handleResults(res) {
-  if (res.ok) {return res.json()} {return Promise.reject(res.status)}
+  if (res.ok) {
+    return res.json();
+  }
+  {
+    return Promise.reject(res.status);
+  }
 }
 
 export function sendLikeToServer(config, cardId) {
-  return fetch(
-    `${config.URL}/cards/likes/${cardId}`,
-    {
-      method: "PUT",
-      headers: {
-        authorization: `${config.token}`,
-      },
-    }
-  )
-  .then(handleResults);
+  return fetch(`${config.URL}/cards/likes/${cardId}`, {
+    method: "PUT",
+    headers: {
+      authorization: `${config.token}`,
+    },
+  }).then(handleResults);
 }
 
 export function deleteLikeFromServer(config, cardId) {
-  return fetch(
-    `${config.URL}/cards/likes/${cardId}`,
-    {
-      method: "DELETE",
-      headers: {
-        authorization: `${config.token}`,
-      },
-    }
-  )
-  .then(handleResults);
+  return fetch(`${config.URL}/cards/likes/${cardId}`, {
+    method: "DELETE",
+    headers: {
+      authorization: `${config.token}`,
+    },
+  }).then(handleResults);
 }
 
 export function removeCardFromServer(config, cardId) {
-  return fetch(
-    `${config.URL}/cards/${cardId}`,
-    {
-      method: "DELETE",
-      headers: {
-        authorization: `${config.token}`,
-      },
-    }
-  )
-  .then(handleResults);
+  return fetch(`${config.URL}/cards/${cardId}`, {
+    method: "DELETE",
+    headers: {
+      authorization: `${config.token}`,
+    },
+  }).then(handleResults);
 }
 
 //　функции для index.js
 
 export function changeAvatar(config, newAvatar) {
-  return fetch(
-    `${config.URL}/users/me/avatar`,
-    {
-      method: "PATCH",
-      headers: {
-        authorization: `${config.token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        avatar: newAvatar,
-      }),
-    }
-  )
-  .then(handleResults);
+  return fetch(`${config.URL}/users/me/avatar`, {
+    method: "PATCH",
+    headers: {
+      authorization: `${config.token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      avatar: newAvatar,
+    }),
+  }).then(handleResults);
 }
 
 export function sendNewCardToServer(config, cardName, cardLink) {
@@ -73,8 +62,7 @@ export function sendNewCardToServer(config, cardName, cardLink) {
       name: cardName,
       link: cardLink,
     }),
-  })
-  .then(handleResults);
+  }).then(handleResults);
 }
 
 export function sendProfileInfo(config, profileName, profileDescription) {
@@ -88,8 +76,7 @@ export function sendProfileInfo(config, profileName, profileDescription) {
       name: profileName,
       about: profileDescription,
     }),
-  })
-  .then(handleResults);
+  }).then(handleResults);
 }
 
 export function getProfileInfo(config) {
@@ -97,8 +84,7 @@ export function getProfileInfo(config) {
     headers: {
       authorization: `${config.token}`,
     },
-  })
-  .then(handleResults);
+  }).then(handleResults);
 }
 
 function getGroupCards(config) {
@@ -106,10 +92,9 @@ function getGroupCards(config) {
     headers: {
       authorization: `${config.token}`,
     },
-  })
-  .then(handleResults);
+  }).then(handleResults);
 }
 
 export const getDataForCards = function (config) {
-  return Promise.all([getProfileInfo(config), getGroupCards(config)])
+  return Promise.all([getProfileInfo(config), getGroupCards(config)]);
 };
